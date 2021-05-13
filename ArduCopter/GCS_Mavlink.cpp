@@ -967,6 +967,16 @@ MAV_RESULT GCS_MAVLINK_Copter::handle_command_long_packet(const mavlink_command_
         return MAV_RESULT_ACCEPTED;
     }
 
+    case MAV_CMD_UPDATE_BARO:
+    {
+        float new_pressure = packet.param1;
+        if (new_pressure > 0) {
+            AP::baro().update_air_pressure(new_pressure);
+        }
+        break;
+    }
+
+
     default:
         return GCS_MAVLINK::handle_command_long_packet(packet);
     }

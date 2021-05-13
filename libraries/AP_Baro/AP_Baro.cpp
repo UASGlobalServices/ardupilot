@@ -321,7 +321,7 @@ void AP_Baro::calibrate(bool save)
     uint8_t num_calibrated = 0;
     for (uint8_t i=0; i<_num_sensors; i++) {
         if (sensors[i].calibrated) {
-            BARO_SEND_TEXT(MAV_SEVERITY_INFO, "Barometer %u calibration complete", i+1);
+            BARO_SEND_TEXT(MAV_SEVERITY_INFO, "Barometer %d calibration complete", i+1);
             num_calibrated++;
         }
     }
@@ -843,6 +843,8 @@ void AP_Baro::update(void)
         }
     }
 
+    BARO_SEND_TEXT(MAV_SEVERITY_INFO, "Altimeter: %u", get_ground_pressure());
+
     for (uint8_t i=0; i<_num_sensors; i++) {
         if (sensors[i].healthy) {
             // update altitude calculation
@@ -943,6 +945,15 @@ void AP_Baro::set_pressure_correction(uint8_t instance, float p_correction)
 {
     if (instance < _num_sensors) {
         sensors[instance].p_correction = p_correction;
+    }
+}
+
+void AP_BARO::update_air_pressure(float new_pressure) {
+    if (new_pressure > 0) {
+        float alt_difference = get_altitude_difference(get_ground_pressure(), new_pressure);
+        if (fabsf(alt_difference) < 500) {
+            set_baro_drift_altitude(alt_difference);
+        }
     }
 }
 
