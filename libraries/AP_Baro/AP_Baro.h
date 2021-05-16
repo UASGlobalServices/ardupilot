@@ -198,6 +198,9 @@ public:
     // set a pressure correction from AP_TempCalibration
     void set_pressure_correction(uint8_t instance, float p_correction);
 
+    // update the air pressure manually using data from ground station/weather app
+    void update_air_pressure(float new_pressure);
+
     uint8_t get_filter_range() const { return _filter_range; }
 
     // indicate which bit in LOG_BITMASK indicates baro logging enabled
